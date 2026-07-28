@@ -97,7 +97,7 @@ def compute_nutrition_label(
     all_sections = {
         "coverage": coverage,
         "perturbation_quality": perturbation_quality,
-        # "known_limitations": known_limitations,
+        "known_limitations": known_limitations,
     }
 
     label = NutritionLabel.model_validate(all_sections)
