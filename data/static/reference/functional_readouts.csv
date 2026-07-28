@@ -1,0 +1,5 @@
+perturbation,model,phagocytosis_amyloid,phagocytosis_synaptosomes,cathepsin_b,lysosomal_ph,secreted_ifnb_response,dq_bsa_uptake
+PRDM1,iMG,up,up,up,down,not measured,no change
+ZNF532,iMG,up,up,no change,no change,not measured,up
+STAT2,iTF-MG,not measured,not measured,down,down,down,not measured
+DNMT1,iTF-MG,not measured,not measured,down,down,down,not measured
