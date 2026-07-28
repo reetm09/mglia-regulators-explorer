@@ -1,0 +1,22 @@
+{
+  "coverage": {
+    "total_kds": 31,
+    "median_cells_per_kd": 250.5,
+    "min_cells_per_kd": 3,
+    "states_profiled": 6,
+    "reliable_states": 5,
+    "proteins_measured": 180,
+    "proteins_validated": 180
+  },
+  "perturbation_quality": {
+    "median_percent_knockdown": 40.31,
+    "n_efficiency_below_threshold": 20,
+    "n_low_cell_count": 12,
+    "n_binary_response": 16,
+    "n_graded_response": 45,
+    "n_with_orthogonal_characterization": 0,
+    "n_high_confidence": 13,
+    "n_moderate_confidence": 13,
+    "n_low_confidence": 36
+  }
+}

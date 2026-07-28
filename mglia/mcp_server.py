@@ -1,9 +1,8 @@
 """MCP server exposing the mglia dataset to AI agents.
 
-Provides three tools:
+Provides two tools:
   - get_perturbation: full record for a KD × model combination
-  - get_split: benchmark task split definition
-  - evaluate_predictions: score model predictions against held-out test set
+  - list_genes: all 31 knockdown gene names in the dataset
 
 Usage (stdio, for Claude Desktop):
     python -m mglia.mcp_server
@@ -20,10 +19,17 @@ Claude Desktop config (~/.config/claude/claude_desktop_config.json):
         }
       }
     }
+
+Usage (remote transport, for manual testing e.g. via the MCP Inspector):
+    python -m mglia.mcp_server --transport streamable-http --port 8502
+    # then, in another terminal:
+    npx @modelcontextprotocol/inspector
+    # Inspector UI: Transport = Streamable HTTP, URL = http://127.0.0.1:8502/mcp
 """
 
 from __future__ import annotations
 
+import argparse
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
@@ -32,91 +38,138 @@ mcp = FastMCP(
     name="mglia-explorer",
     instructions=(
         "You have access to the mglia dataset: CRISPRi perturbation data from "
-        "McQuade, Mishra et al. 2025 covering 31 transcription factor knockdowns "
+        "McQuade et al. 2026 covering 31 transcription factor knockdowns "
         "in two human iPSC-derived microglia models (iTF-MG and iMG). "
-        "Use get_perturbation to retrieve a full knockdown record, get_split to "
-        "inspect benchmark task definitions, and evaluate_predictions to score "
-        "model predictions against the held-out test set."
+        "Use get_perturbation to retrieve a full knockdown record, and list_genes "
+        "to see all available knockdown gene names."
+        "Before explaining any questions about the dataset, always call ReadMcpResourceTool"
+        "on mglia://glossary first. Answer with exact text from glossary tool first."
     ),
 )
 
 
 @mcp.tool()
-def get_perturbation(gene: str, model: str) -> dict[str, Any]:
+def get_perturbation(gene: str, model: str | None = None) -> dict[str, Any]:
     """Return the full perturbation record for a knockdown gene in a cell model.
 
     Args:
         gene: Target gene name (e.g. 'ZNF532'). Must be one of the 31 KD genes:
-            BHLHE40, BRD4, CHD4, EGR1, EZH2, HDAC1, IRF1, IRF3, IRF8, KLF4,
-            MED12, MEF2A, MEIS1, NFKB1, NR4A1, PPARG, RUNX1, SMAD3, SP1, SPI1,
-            TET2, TRIM28, ZEB1, ZNF148, ZNF281 (train) and
-            ZNF532, PRDM1, STAT2, DNMT1, ZNF644, ZNF783 (test — held out).
+            "ARID2",
+                "ARID5B",
+                "ATMIN",
+                "BHLHE40",
+                "BHLHE41",
+                "BPTF",
+                "CEBPD",
+                "CNOT10",
+                "DEAF1",
+                "FOXK1",
+                "IRF9",
+                "MAF",
+                "MEF2C",
+                "MEF2D",
+                "MITF",
+                "POU5F1",
+                "RELA",
+                "RUNX1",
+                "SALL4",
+                "SPI1",
+                "SREBF1",
+                "STAT1",
+                "TCF4",
+                "ZNF148",
+                "ZNF783",
+                "ZNF532",
+                "PRDM1",
+                "STAT2",
+                "DNMT1",
+                "ZNF644",
+                "SMAD3"
         model: Cell model — 'iTF-MG' (transcription-factor driven, 14-day protocol)
-            or 'iMG' (cytokine driven, 25-day protocol).
+            or 'iMG' (cytokine driven, 25-day protocol). IMPORTANT: model is scoped to THIS query
+            only. Do not infer or reuse a model that was specified for a different gene
+            earlier in the same conversation. Each new gene request needs its own explicit
+            model, stated for that gene. If the user's current message doesn't name a
+            model for this gene, omit the param even if an earlier turn named one
+            for a different gene.
 
     Returns:
-        Full PerturbationRecord dict including:
-        - n_cells, confidence, kd_efficiency, mixscale_response, benchmark_split
+        If `model` is given and matches a record: the full PerturbationRecord
+        dict including:
+        - n_cells, confidence, percent_knockdown, mixscale_response
         - signature_shifts: per-state delta_pctl and FDR (6 states)
         - top_degs: top 50 upregulated and downregulated genes
         - schpf_factors: top increased/decreased latent factors
         - functional_readouts: phagocytosis, lysosomal pH, cathepsin B (4 KDs only)
-        - assumption_audit: methodological flags and warnings
+        - method_assumptions: methodological assumptions, flags, and caveats
         - discordances: mRNA/protein direction mismatches
+
+        If `model` is omitted, or doesn't match any record for this gene: a
+        dict with the following fields and shape:
+        {"status": "needs_clarification",
+        "gene": <gene>,
+        "valid_models": ["iTF-MG", "iMG"],
+        "message": "Ask the user which cell model they mean, then call "
+        "get_perturbation again with model set to their answer. Do not "
+        "guess or reuse a model from a different gene's query.",
+        }
     """
     from mglia.agent import get_perturbation as _get
+
     return _get(gene, model)
 
 
 @mcp.tool()
-def get_split(task: str) -> dict[str, Any]:
-    """Return the benchmark split definition for a task.
-
-    Args:
-        task: One of:
-            'perturbation_prediction' — predict 6-state shifts for held-out KDs
-            'cross_model_generalization' — train on iTF-MG, evaluate on iMG
-            'dose_response' — predict per-Mixscale-tier signature shifts
-            'multistate_combinatorial' — predict 6-state direction vector
+def list_genes() -> list[str]:
+    """Return all knockdown gene names available in the dataset.
 
     Returns:
-        Dict with:
-        - train_genes: list of gene names used for training
-        - test_genes: list of held-out gene names
-        - description: plain-language task description
-        - input_features: list of input feature names
-        - prediction_targets: list of output target names
-        - metrics: list of evaluation metric names
-        - primary_metric: the headline metric name
+        Sorted list of all 31 KD gene names.
     """
-    from mglia.benchmark import get_split as _get
-    return _get(task)
+    from mglia.agent import list_genes as _list
+
+    return _list()
 
 
-@mcp.tool()
-def evaluate_predictions(predictions: dict[str, Any], task: str) -> dict[str, float]:
-    """Score model predictions against the held-out test set.
-
-    Args:
-        predictions: Dict mapping test gene names to predicted state shift vectors.
-            Format depends on task:
-            - perturbation_prediction / multistate_combinatorial:
-                { "ZNF532": { "homeostatic": -12.5, "disease_associated": 8.3, ... }, ... }
-            - dose_response:
-                { "ZNF532": { "bottom": {...}, "middle": {...}, "top": {...} }, ... }
-            - cross_model_generalization:
-                Same as perturbation_prediction but evaluated on iMG genes.
-        task: Task name (same options as get_split).
-
-    Returns:
-        Dict with per-metric scores and an 'overall' weighted composite score.
-        Example: { "pearson_r": 0.42, "direction_accuracy": 0.71, "overall": 0.55 }
+@mcp.resource("mglia://glossary")
+def glossary() -> dict[str, Any]:
+    """Reference definitions for microglial states, scHPF factors, nutrition label, mixscale,
+    and method-assumptions methodology used throughout the mglia dataset. Fetch this before
+    interpreting factor labels (e.g. 'gpnmb-high') or method_assumptions flags returned by
+    get_perturbation or explanations that involve mixscale-derived DEGs and the dataset nutrition label.
     """
-    from mglia.benchmark import score_predictions as _score
-    import pandas as pd
-    pred_df = pd.DataFrame(predictions).T
-    return _score(pred_df, task)
+    from mglia.agent import get_glossary as _get
+
+    return _get()
+
+
+def _parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(
+        description="Run the microglia regulator MCP server."
+    )
+    parser.add_argument(
+        "--transport",
+        choices=["stdio", "sse", "streamable-http"],
+        default="stdio",
+        help="Transport to serve over. Defaults to stdio (for Claude Desktop). "
+        "The promoted remote option is streamable-http.",
+    )
+    parser.add_argument(
+        "--host",
+        default="0.0.0.0",
+        help="Host to bind to for sse/streamable-http transports (ignored for stdio).",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8502,
+        help="Port to bind to for sse/streamable-http transports (ignored for stdio).",
+    )
+    return parser.parse_args()
 
 
 if __name__ == "__main__":
-    mcp.run()
+    args = _parse_args()
+    mcp.settings.host = args.host
+    mcp.settings.port = args.port
+    mcp.run(transport=args.transport)
