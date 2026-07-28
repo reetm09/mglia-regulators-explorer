@@ -11,8 +11,6 @@ from mglia.constants import (
     RNA_VOLCANO_COLORS,
     SIGNATURE_GENE_SETS,
     STATES,
-    # disabled: benchmark/train-test feature removed from active use
-    # TEST_SET_GENES,
 )
 from mglia.dataset_config import MGLIA_DEFAULT_CONFIG
 from mglia.ui_components import (
