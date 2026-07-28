@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 import streamlit as st
 from PIL import Image
 
-from mglia import qc_report
+from mglia import nutrition_report
 from mglia.constants import (
     CHART_FONT_COLOR,
     COLOR_DANGER,
@@ -39,10 +39,10 @@ _KD_SOURCE_LABELS = {
     "not_measured": "Not measured",
 }
 
-# Shared palette with mglia.qc_report
-GREEN = qc_report.CONFIDENCE_COLORS["high"]
-YELLOW = qc_report.CONFIDENCE_COLORS["moderate"]
-RED = qc_report.CONFIDENCE_COLORS["low"]
+# Shared palette with mglia.nutrition_report
+GREEN = nutrition_report.CONFIDENCE_COLORS["high"]
+YELLOW = nutrition_report.CONFIDENCE_COLORS["moderate"]
+RED = nutrition_report.CONFIDENCE_COLORS["low"]
 
 
 def render_global_styles() -> None:

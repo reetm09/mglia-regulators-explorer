@@ -3,7 +3,6 @@
 from pathlib import Path
 
 import streamlit as st
-
 from mglia.constants import CITATION
 from mglia.ui_components import render_global_styles
 

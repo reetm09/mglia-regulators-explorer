@@ -52,10 +52,6 @@ if record is None:
     st.error(f"No record found for {gene} in {model}.")
     st.stop()
 
-# disabled: benchmark/train-test feature removed from active use
-# if gene in TEST_SET_GENES:
-#     st.warning("This gene is in the held-out test set. Do not use it to train models.")
-
 # ---------------------------------------------------------------------------
 # Gene header card
 # ---------------------------------------------------------------------------

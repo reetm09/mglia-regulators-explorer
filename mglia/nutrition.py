@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from typing import TYPE_CHECKING, Literal
 
-from mglia import constants, qc_report
+from mglia import constants, nutrition_report
 from mglia.dataset_config import REPO_ROOT
 from mglia.schema import (
     NutritionLabel,
@@ -54,7 +54,7 @@ def compute_nutrition_label(
         FileNotFoundError: If records_path does not exist.
     """
     records = validate_all_records(records_path)
-    df = qc_report.build_qc_dataframe(records)
+    df = nutrition_report.build_qc_dataframe(records)
 
     coverage = {
         "total_kds": len({r.perturbation for r in records}),

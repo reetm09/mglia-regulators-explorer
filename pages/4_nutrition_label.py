@@ -5,7 +5,7 @@ import json
 import streamlit as st
 from mglia.constants import GLOSSARY_BLURBS
 from mglia.nutrition import load_nutrition_label
-from mglia.qc_report import (
+from mglia.nutrition_report import (
     build_qc_dataframe,
     build_summary_counts,
     render_cell_count_panel,
@@ -51,11 +51,6 @@ with summary_col1:
 with summary_col2:
     for tier in ("high", "moderate", "low"):
         st.metric(f"Confidence: {tier}", qc_summary["by_confidence"].get(tier, 0))
-# "Records with >=1 warning flag" and split:train/split:test metrics removed from
-# display for now — data still available in qc_summary above.
-# st.metric("Records with >=1 warning flag", qc_summary["n_with_warnings"])
-# for split in ("train", "test"):
-#     st.metric(f"Split: {split}", qc_summary["by_split"].get(split, 0))
 
 st.plotly_chart(
     render_cell_count_panel(qc_df),

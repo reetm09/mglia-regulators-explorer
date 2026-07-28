@@ -144,7 +144,7 @@ with col_fn_b:
 # ZNF532 vs PRDM1 narrative callout
 # ---------------------------------------------------------------------------
 
-if set([gene_a, gene_b]) == {"ZNF532", "PRDM1"} and model == "iMG":
+if {gene_a, gene_b} == {"ZNF532", "PRDM1"} and model == "iMG":
     st.info(
         "Both ZNF532 and PRDM1 drive DAM up and phagocytosis up. But ZNF532 drives "
         "antigen-presenting **down** while PRDM1 drives it **up**. Same functional outcome, "
