@@ -194,16 +194,17 @@ GLOSSARY_BLURBS: dict[str, str] = {
 
 CITATION: dict[str, str] = {
     "authors": """
-    Amanda McQuade, Reet Mishra, Venus Hagan, Weiwei Liang, Peter J. Colias, Vincent Cele Castillo,
-    Bianca Gonzalez, Justin P. Lubin, Verena Haage, Victoria Marshe, Masashi Fujita, Thomas Ta, Layla Gomes,
-    Olivia Teter, Xia Han, Nathaniel Robichaud, Sarah E. Chasins, Jessica E. Rexach, Philip L. De Jager,
-    James K. Nuñez, and Martin Kampmann,
+    McQuade, A., Mishra, R., Hagan, V., Liang, W., Colias, P. J., 
+    Castillo, V. C., Gonzalez, B., Lubin, J. P., Haage, V., Marshe, V., 
+    Fujita, M., Ta, T., Gomes, L., Teter, O., Han, X., Robichaud, N., 
+    Chasins, S. E., Rexach, J. E., De Jager, P. L., Nuñez, J. K., Kampmann, M.
     """,
+    "short": "McQuade et al.",
     "title": "Transcriptional regulation of disease-relevant microglial activation programs",
-    "journal_or_preprint": "Neuron",
+    "journal": "Neuron",
     "year": "2026",
     "doi_url": "10.1016/j.neuron.2026.07.001",
-    "github_url": "https://github.com/reetm09/mglia_regulators_paper",
+    "github_url": "https://github.com/reetm09/mglia-regulators-explorer",
     "contact_email": "reet.mishra@ucsf.edu",
 }
 
