@@ -193,13 +193,17 @@ GLOSSARY_BLURBS: dict[str, str] = {
 # ---------------------------------------------------------------------------
 
 CITATION: dict[str, str] = {
-    "authors": "McQuade et al. 2026",
+    "authors": """
+    Amanda McQuade, Reet Mishra, Venus Hagan, Weiwei Liang, Peter J. Colias, Vincent Cele Castillo,
+    Bianca Gonzalez, Justin P. Lubin, Verena Haage, Victoria Marshe, Masashi Fujita, Thomas Ta, Layla Gomes,
+    Olivia Teter, Xia Han, Nathaniel Robichaud, Sarah E. Chasins, Jessica E. Rexach, Philip L. De Jager,
+    James K. Nuñez, and Martin Kampmann,
+    """,
     "title": "Transcriptional regulation of disease-relevant microglial activation programs",
     "journal_or_preprint": "Neuron",
     "year": "2026",
-    "doi_url": "#",
+    "doi_url": "10.1016/j.neuron.2026.07.001",
     "github_url": "https://github.com/reetm09/mglia_regulators_paper",
-    "preprint_url": "#",
     "contact_email": "reet.mishra@ucsf.edu",
 }
 
