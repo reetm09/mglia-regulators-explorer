@@ -4,6 +4,7 @@ version = "0.1.0"
 description = "Explore microglia regulators dataset as human through Streamlit UI or as an agent through a Claude-compatible MCP server"
 requires-python = ">=3.11"
 dependencies = [
+    "fastmcp>=2.14.1",
     "mcp>=2.0.0",
     "numpy>=2.4.6",
     "pandas>=3.0.5",
