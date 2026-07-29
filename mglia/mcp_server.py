@@ -33,9 +33,10 @@ import argparse
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 
 mcp = FastMCP(
-    name="mglia-explorer",
+    name="mglia-regulators-explorer",
     instructions=(
         "You have access to the mglia dataset: CRISPRi perturbation data from "
         "McQuade et al. 2026 covering 31 transcription factor knockdowns "
@@ -44,6 +45,18 @@ mcp = FastMCP(
         "to see all available knockdown gene names."
         "Before explaining any questions about the dataset, always call ReadMcpResourceTool"
         "on mglia://glossary first. Answer with exact text from glossary tool first."
+    ),
+    transport_security=TransportSecuritySettings(
+        enable_dns_rebinding_protection=True,
+        allowed_hosts=[
+            "mglia-regulators-explorer.onrender.com",
+            "localhost:*",
+            "127.0.0.1:*",
+        ],
+        allowed_origins=[
+            "https://mglia-regulators-explorer.onrender.com",
+            "http://localhost:*",
+        ],
     ),
 )
 
