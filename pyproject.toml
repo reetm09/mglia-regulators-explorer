@@ -1,0 +1,22 @@
+[project]
+name = "mglia-regulators-explorer"
+version = "0.1.0"
+description = "Explore microglia regulators dataset as human through Streamlit UI or as an agent through a Claude-compatible MCP server"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=2.0.0",
+    "numpy>=2.4.6",
+    "pandas>=3.0.5",
+    "pillow>=12.3.0",
+    "plotly>=6.9.0",
+    "pydantic>=2.13.4",
+    "pytest>=9.1.1",
+    "scipy>=1.17.1",
+    "streamlit>=1.60.0",
+]
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["mglia"]
