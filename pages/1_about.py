@@ -25,18 +25,23 @@ st.markdown(
 )
 
 if Path(_MODEL_CARD_PATH).exists():
-    st.image(_MODEL_CARD_PATH, caption="Model card", width=350)
+    st.image(_MODEL_CARD_PATH, caption="Dataset card", width=350)
 else:
-    st.caption(f"Model card image — drop file into `{_MODEL_CARD_PATH}`")
+    st.caption(f"Dataset card image — drop file into `{_MODEL_CARD_PATH}`")
 
 st.markdown(
     f"""
     ## Citation
 
-    **{CITATION["authors"]}**
-    {CITATION["title"]}
-    [DOI: {CITATION["journal_or_preprint"]}]({CITATION["doi_url"]})
+    #### Full
+    {CITATION["authors"]} ({CITATION["year"]}). 
+    {CITATION["title"]}. *{CITATION["journal"]}* [{CITATION["doi_url"]}](https://doi.org/{CITATION["doi_url"]})
 
-    [GitHub]({CITATION["github_url"]}) · [Preprint]({CITATION["preprint_url"]}) · {CITATION["contact_email"]}
+
+    #### Short
+    {CITATION["short"]}, {CITATION["title"]}, *{CITATION["journal"]}* ({CITATION["year"]}), [{CITATION["doi_url"]}](https://doi.org/{CITATION["doi_url"]})
+    
+    #### Code
+    [GitHub Link]({CITATION["github_url"]}) • Email {CITATION["contact_email"]} if you have any questions.
     """
 )

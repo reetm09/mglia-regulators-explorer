@@ -193,13 +193,18 @@ GLOSSARY_BLURBS: dict[str, str] = {
 # ---------------------------------------------------------------------------
 
 CITATION: dict[str, str] = {
-    "authors": "McQuade et al. 2026",
+    "authors": """
+    McQuade, A., Mishra, R., Hagan, V., Liang, W., Colias, P. J., 
+    Castillo, V. C., Gonzalez, B., Lubin, J. P., Haage, V., Marshe, V., 
+    Fujita, M., Ta, T., Gomes, L., Teter, O., Han, X., Robichaud, N., 
+    Chasins, S. E., Rexach, J. E., De Jager, P. L., Nuñez, J. K., Kampmann, M.
+    """,
+    "short": "McQuade et al.",
     "title": "Transcriptional regulation of disease-relevant microglial activation programs",
-    "journal_or_preprint": "Neuron",
+    "journal": "Neuron",
     "year": "2026",
-    "doi_url": "#",
-    "github_url": "https://github.com/reetm09/mglia_regulators_paper",
-    "preprint_url": "#",
+    "doi_url": "10.1016/j.neuron.2026.07.001",
+    "github_url": "https://github.com/reetm09/mglia-regulators-explorer",
     "contact_email": "reet.mishra@ucsf.edu",
 }
 
