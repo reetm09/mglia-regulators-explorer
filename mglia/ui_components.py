@@ -151,6 +151,7 @@ def render_signature_bars(
         Plotly Figure. Caller should render with st.plotly_chart(fig, config={"displaylogo": False}).
     """
     state_keys = [k for k in STATES if k in shifts]
+    state_keys.sort(key=lambda k: STATES[k]["display"])
     labels = [STATES[k]["display"] for k in state_keys]
     deltas = [shifts[k]["delta_pctl"] for k in state_keys]
     fdrs = [shifts[k]["fdr"] for k in state_keys]
@@ -196,7 +197,7 @@ def render_signature_bars(
         height=height,
     )
     fig.update_xaxes(automargin=True)
-    fig.update_yaxes(automargin=True)
+    fig.update_yaxes(automargin=True, autorange="reversed")
     fig.add_vline(x=0, line_color=COLOR_NEUTRAL, line_width=1)
     return fig
 
@@ -297,7 +298,7 @@ def render_gene_header(record: "PerturbationRecord") -> None:
         row2 = st.columns(3)
         with row2[0]:
             st.metric(
-                "Mean NTC expression of target gene",
+                "Mean NTC log-normalized expression of target gene",
                 f"{ntc_mean_expr:.2f}" if ntc_mean_expr is not None else "—",
             )
         with row2[1]:
@@ -306,7 +307,7 @@ def render_gene_header(record: "PerturbationRecord") -> None:
                 f"{ntc_frac_expr:.0%}" if ntc_frac_expr is not None else "—",
             )
         with row2[2]:
-            st.metric("Knockdown source", kd_source_label)
+            st.metric("Knockdown validation method", kd_source_label)
 
     with tags_col:
         render_confidence_badge(record.confidence)
