@@ -16,7 +16,7 @@ st.markdown(
     """
     ## Dataset
 
-    This tool explores CRISPRi perturbation data from McQuade et al. 2025, covering 31
+    This tool explores CRISPRi perturbation data from McQuade et al. 2026, covering 31
     transcription factor knockdowns across two human iPSC-derived microglia models
     (iTF-MG and iMG). Each perturbation record includes signature shifts across 6 microglial
     states, top differentially expressed genes, scHPF factor activity, functional assay
