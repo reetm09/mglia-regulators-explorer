@@ -1,6 +1,7 @@
 """Agent access page — MCP server reference and live JSON query interface."""
 
 import json
+from pathlib import Path
 
 import streamlit as st
 from mglia.constants import ALL_KD_GENES, CELL_MODELS
@@ -8,14 +9,16 @@ from mglia.ui_components import render_global_styles
 
 render_global_styles()
 
+APP_DIR = Path(__file__).resolve().parent.parent
+IMG_DIR = APP_DIR / "data" / "static" / "reference"
+
 st.title("Agentic Exploring")
 
 st.markdown(
     """
     This page is designed for **AI agents** (Claude, GPT-4, etc.) connecting to the
     mglia dataset via the [Model Context Protocol (MCP)](https://modelcontextprotocol.io).
-    The MCP server exposes structured, machine-readable access to all 62 perturbation records
-    and benchmark tasks — no web scraping, no parsing HTML.
+    The MCP server exposes structured, machine-readable access to all 62 perturbation records.
     """
 )
 
@@ -26,42 +29,102 @@ st.markdown(
 st.markdown("---")
 st.subheader("Connect via MCP")
 
-tab_local, tab_remote = st.tabs(["Local (Claude Desktop)", "Remote (streamable-HTTP)"])
+#tab_local, tab_remote = st.tabs(["Local (Claude Desktop)", "Remote (streamable-HTTP)"])
+tab_desktop, tab_code, tab_local = st.tabs(["Claude Desktop or Claude Web",
+                                            "Claude Code",
+                                            "Local"])
+
+with tab_desktop:
+    url_1 = "https://claude.ai"
+    st.markdown("1. Open Claude Web [https://claude.ai](%s) or Claude Desktop" % (url_1))
+    st.markdown("2. Navigate to `Add Connector` Button")
+    st.image(str(IMG_DIR / "navigate_to_add_connector.png"),
+             caption="Click `Add custom connector`",
+             width="stretch")
+    url_2 = "https://mglia-regulators-explorer.onrender.com/mcp"
+    st.markdown("3. Choose any name and enter MCP Server Link: [https://mglia-regulators-explorer.onrender.com/mcp](%s)" % url_2)
+    st.image(str(IMG_DIR / "add_custom_connector_details.png"),
+                 caption="Click `Add` once finished with entering details",
+                 width="stretch")
+    st.markdown("4. Ask Away! It may ask for permissions when you start asking questions. You can click **Accept** when it asks for if it can use `get_perturbation` or `list_genes`")
+ 
+with tab_code:
+    st.markdown("1. Open Terminal before running `claude`")
+    st.markdown("2. Run: ")
+    st.code("claude mcp add --transport http mglia https://mglia-regulators-explorer.onrender.com/mcp")
+    st.markdown("3. Use this to check if server is added Claude Code environment:")
+    st.code("# List all configured servers\n"
+            "claude mcp list\n"
+            "# Get info about specific server\n"
+            "claude mcp get mglia")
+    st.code("# Check within Claude\n"
+            "/mcp")
+    st.markdown("4. Ask Away!")
 
 with tab_local:
-    st.markdown("Add this to your `claude_desktop_config.json`:")
-    st.code(
-        json.dumps(
-            {
-                "mcpServers": {
-                    "mglia": {
-                        "command": "python",
-                        "args": ["-m", "mglia.mcp_server"],
-                        "cwd": "/path/to/mglia-regulators-dashboard",
+    st.markdown("1. Clone Github Repo")
+    st.code("git clone https://github.com/reetm09/mglia-regulators-explorer.git \n" 
+            "cd mglia-regulators-explorer", language="git")
+    st.markdown("2. Start Virtual Environment")
+    st.code("uv venv .mglia-env")
+    st.code("source .mglia-env/bin/activate")
+    st.markdown("3. Install dependencies from  `requirements.txt`")
+    st.code("uv pip install -r requirements.txt")
+    
+    st.markdown("4. Installing MCP Server")
+    
+    #st.expander("4a. Option 1: Claude Desktop Configuration File")
+    with st.expander("4a. Option 1: Claude Desktop Configuration File", expanded=True):
+        st.markdown("Add this to your `claude_desktop_config.json`:")
+        st.code(
+            json.dumps(
+                {
+                    "mcpServers": {
+                        "mglia": {
+                            "command": "python",
+                            "args": ["-m", "mglia.mcp_server"],
+                            "cwd": "/path/to/mglia-regulators-explorer/",
+                        }
                     }
-                }
-            },
-            indent=2,
-        ),
-        language="json",
-    )
-    st.caption(
-        "Replace `/path/to/mglia-regulators-dashboard` with the absolute path to this repo. "
-        "Then restart Claude Desktop — the mglia tools will appear automatically."
-    )
+                },
+                indent=2,
+            ),
+            language="json",
+        )
+        st.caption(
+            "Then restart Claude Desktop. The server will appear automatically."
+        )
+    
+    #st.expander("4b. Option 2: Start the server over streamable-HTTP")
+    with st.expander("4b. Option 2: Start the server over streamable-HTTP", expanded=True):
+        st.markdown("Run:")
+        st.code(
+            "python -m mglia.mcp_server --transport streamable-http --port 8502",
+            language="bash",
+        )
+        st.markdown("Then connect with the MCP Inspector to test manually:")
+        st.code("npx @modelcontextprotocol/inspector", language="bash")
+        st.caption(
+            "In the Inspector UI: Transport = Streamable HTTP, "
+            "URL = http://127.0.0.1:8502/mcp."
+        )
 
-with tab_remote:
-    st.markdown("Start the server over streamable-HTTP:")
-    st.code(
-        "python -m mglia.mcp_server --transport streamable-http --port 8502",
-        language="bash",
-    )
-    st.markdown("Then connect with the MCP Inspector to test manually:")
-    st.code("npx @modelcontextprotocol/inspector", language="bash")
-    st.caption(
-        "In the Inspector UI: Transport = Streamable HTTP, "
-        "URL = http://127.0.0.1:8502/mcp. Local testing only — not hosted remotely."
-    )
+
+# ---------------------------------------------------------------------------
+# Example Questions
+# ---------------------------------------------------------------------------
+
+st.markdown("---")
+st.subheader("Example Questions to Ask")
+st.markdown("""
+            - What are the Top DEGs in PRDM1 in iMG?
+            - What states does STAT2 affect in iTF-MG?
+            - Which perturbations regulate the interferon state?
+            - Compare ZN532 to PRDM1
+            - Which genes regulate phagocytosis?
+            - Which genes have both transcriptomic and experimental evidence?
+            - What are the high confidence perturbations?
+            """)
 
 # ---------------------------------------------------------------------------
 # Tool reference
@@ -96,7 +159,7 @@ with st.expander("get_perturbation(gene, model)", expanded=True):
             json.dumps(
                 {
                     "perturbation": "ZNF532",
-                    "cell_model": "iTF-MG",
+                    "cell_model": "iMG",
                     "n_cells": 312,
                     "confidence": "high",
                     "signature_shifts": {
@@ -122,89 +185,6 @@ with st.expander("list_genes()"):
         genes = sorted(ALL_KD_GENES)
         example_genes = genes[:3] + ["..."] + genes[-3:]
         st.code(json.dumps(example_genes, indent=2), language="json")
-
-# with st.expander("get_split(task) (not currently enabled)"):
-#     col_l, col_r = st.columns([1, 1])
-#     with col_l:
-#         st.markdown("**Description**")
-#         st.caption("This tool is disabled in mglia/mcp_server.py — kept for reference.")
-#         st.markdown(
-#             "Return the train/test split definition for a benchmark task, including "
-#             "input feature specs, prediction targets, and metric descriptions."
-#         )
-#         st.markdown("**Input schema**")
-#         st.code(
-#             json.dumps(
-#                 {
-#                     "task": (
-#                         "string — one of 'perturbation_prediction', "
-#                         "'cross_model_generalization', 'dose_response', "
-#                         "'multistate_combinatorial'"
-#                     )
-#                 },
-#                 indent=2,
-#             ),
-#             language="json",
-#         )
-#     with col_r:
-#         st.markdown("**Example response**")
-#         st.code(
-#             json.dumps(
-#                 {
-#                     "task_name": "perturbation_prediction",
-#                     "train_genes": ["BHLHE40", "BRD4", "..."],
-#                     "test_genes": ["ZNF532", "PRDM1", "STAT2", "DNMT1", "ZNF644", "ZNF783"],
-#                     "primary_metric": "pearson_r",
-#                     "metrics": ["pearson_r", "direction_accuracy"],
-#                 },
-#                 indent=2,
-#             ),
-#             language="json",
-#         )
-
-# with st.expander("evaluate_predictions(predictions, task) (not currently enabled)"):
-#     col_l, col_r = st.columns([1, 1])
-#     with col_l:
-#         st.markdown("**Description**")
-#         st.caption("This tool is disabled in mglia/mcp_server.py — kept for reference.")
-#         st.markdown(
-#             "Score model predictions against the held-out test set. "
-#             "Returns per-metric scores and an overall weighted composite."
-#         )
-#         st.markdown("**Input schema**")
-#         st.code(
-#             json.dumps(
-#                 {
-#                     "predictions": {
-#                         "ZNF532": {
-#                             "homeostatic": -8.5,
-#                             "disease_associated": 12.1,
-#                             "lipid_rich": 3.2,
-#                             "antigen_presenting": -5.0,
-#                             "interferon_responsive": 0.8,
-#                             "chemokine": 1.1,
-#                         },
-#                         "...": "...",
-#                     },
-#                     "task": "perturbation_prediction",
-#                 },
-#                 indent=2,
-#             ),
-#             language="json",
-#         )
-#     with col_r:
-#         st.markdown("**Example response**")
-#         st.code(
-#             json.dumps(
-#                 {
-#                     "pearson_r": 0.42,
-#                     "direction_accuracy": 0.71,
-#                     "overall": 0.55,
-#                 },
-#                 indent=2,
-#             ),
-#             language="json",
-#         )
 
 # ---------------------------------------------------------------------------
 # Resource reference
@@ -273,7 +253,6 @@ st.subheader("Live JSON query")
 
 st.caption(
     "Query a perturbation record directly. "
-    "Requires data/perturbations.json to be generated."
 )
 
 q_col_a, q_col_b = st.columns([2, 1])
@@ -298,41 +277,10 @@ if st.button("Fetch record"):
         except NotImplementedError:
             st.warning(
                 "Record lookup is not implemented yet. "
-                # "Run `make generate` after implementing `mglia/compute.py` and "
-                # "`scripts/generate_records.py`."
             )
         except FileNotFoundError:
             st.error(
                 "data/perturbations.json not found."
-            )  # sRun `make generate` first.")
+            ) 
         except KeyError as e:
             st.error(f"Record not found: {e}")
-
-# ---------------------------------------------------------------------------
-# Downloads
-# ---------------------------------------------------------------------------
-
-# st.markdown("---")
-# st.subheader("Downloads")
-
-# dl1, dl2 = st.columns(2)
-
-# with dl1:
-#     st.download_button(
-#         label="Download perturbations.json",
-#         data="[]",  # TODO: real file
-#         file_name="perturbations.json",
-#         mime="application/json",
-#         disabled=True,
-#         help="Run `make generate` to produce this file first.",
-#     )
-
-# with dl2:
-#     st.download_button(
-#         label="Download benchmark_splits.json",
-#         data="{}",  # TODO: real file
-#         file_name="benchmark_splits.json",
-#         mime="application/json",
-#         disabled=True,
-#         help="Run `make generate` to produce this file first.",
-#     )
