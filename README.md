@@ -100,7 +100,7 @@ McQuade et al., Transcriptional regulation of disease-relevant microglial activa
     
 **Code**
 
-GitHub [Link](https://github.com/reetm09/mglia-regulators-explorer) • Email reet.mishra@ucsf.edu if you have any questions.
+GitHub [Link](https://github.com/reetm09/mglia-regulators-explorer) • Email reet.mishra@ucsf.edu if you have any questions, issues or feedback!
 <!-- CITATION:END -->
 
 
