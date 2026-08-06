@@ -12,6 +12,13 @@ st.title("About")
 
 _MODEL_CARD_PATH = "data/static/reference/model_card.png"
 
+# st.markdown(
+#     """
+#     ## Exploring Dataset through MCP Demo
+#     """
+# )
+# st.video()
+
 st.markdown(
     """
     ## Dataset

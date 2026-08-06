@@ -15,10 +15,10 @@ data to AI agents so you can query the entire dataset without any code.
 
 | If you want to                                         | For      | Go to Page                                                                    |
 | ------------------------------------------------------ | -------- | ----------------------------------------------------------------------------- |
-| See everything known about one perturbation            | Humans   | **Explore Perturbations**                                                     |
-| Ask whether two perturbations do the same thing        | Human    | **Compare Perturbations**                                                     |
-| Decide whether to trust this dataset for your question | Human    | **Dataset Nutrition**                                                         |
-| Let an LLM query the dataset for you                   | AI Agent | **Agentic Exploring**                                                         |
+| See everything known about one perturbation            | Humans   | [**Explore Perturbations**](https://mglia-regulators-explorer.streamlit.app/explore)                                                     |
+| Ask whether two perturbations do the same thing        | Human    | [**Compare Perturbations**](https://mglia-regulators-explorer.streamlit.app/compare)                                                     |
+| Decide whether to trust this dataset for your question | Human    | [**Dataset Nutrition**](https://mglia-regulators-explorer.streamlit.app/nutrition_label)                                                         |
+| Let an LLM query the dataset for you                   | AI Agent | [**Agentic Exploring**](https://mglia-regulators-explorer.streamlit.app/agent)                                                         |
 | Get the raw sequencing data                            | Both     | [GEO: GSE335887](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE335887) |
 | Reproduce the analysis                                 | Both     | [Paper Official Repo](https://github.com/reetm09/mglia_regulators_paper)
 | Read the paper                                         | Both     | [McQuade et al., 2026](https://www.cell.com/neuron/fulltext/S0896-6273(26)00530-1)
@@ -26,7 +26,7 @@ data to AI agents so you can query the entire dataset without any code.
 
 ## Example questions to ask via Agent
 Ordered from simpler to more complex queries
- - What are the Top DEGs in PRDM1 in iMG?
+ - What are the Top DEGs in ZNF532 in iMG?
  - What states does STAT2 affect in iTF-MG?
  - What are scHPF factors?
  - Which are the top regulators of the interferon state?
@@ -85,6 +85,20 @@ The MCP server (`mglia/mcp_server.py`) exposes `get_perturbation` and `list_gene
 plus a `mglia://glossary` resource. See `pages/5_agent.py` or the `Agentic Exploration` Page on
 the dashboard for installation instructions.
 
+## Architecture Decisions
+
+Per-perturbation information is often separated across processed data files, figures, supplementary materials, methods, and paper text. The molecular measurements may be in an .h5ad, while experimental results, validation, orthogonal characterizations, functional readouts and method assumptions live in the paper or need to be re-derived even for result interpretation.
+
+Generating a structured JSON PerturbationRecord for each knockdown, the smallest unit in this dataset, allows for unification of published results derived from both computational and experimental work. This is one approach to enable each perturbation to carry not only results but also caveats and limitations that may not be as obvious to AI agents when accessing the dataset.
+
+<img src="docs/images/architecture_1.png" width="400" alt="Architecture Design - Publication to Structured Record">
+
+Using PerturbationRecord as the base I display data in an interactive dashboard designed primarily for human scientists and through an MCP server with tools like `getPerturbtaion` or `listGenes`, and with a `Glossary` resource for AI agents to interrogate the dataset, ensuring results across methods are carried through. 
+
+<img src="docs/images/architecture_2.png" width="400" alt="Architecture Design - Record to Dashboard and MCP">
+
+See `mglia/schema.py` for more details on PerturbationRecord. Currently optimized for this dataset, many fields are optional and can be defined differently across other transcriptomic perturbation datasets. 
+
 ## Citation
 
 <!-- CITATION:START -->
@@ -100,7 +114,7 @@ McQuade et al., Transcriptional regulation of disease-relevant microglial activa
     
 **Code**
 
-GitHub [Link](https://github.com/reetm09/mglia-regulators-explorer) • Email reet.mishra@ucsf.edu if you have any questions, issues or feedback!
+GitHub [Link](https://github.com/reetm09/mglia-regulators-explorer) • Email reet.mishra@ucsf.edu if you have any questions, or issues. Feedback is also always welcome!
 <!-- CITATION:END -->
 
 
