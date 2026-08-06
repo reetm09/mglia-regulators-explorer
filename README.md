@@ -87,7 +87,7 @@ the dashboard for installation instructions.
 
 ## Architecture Decisions
 
-Per-perturbation information is often separated across processed data files, figures, supplementary materials, methods, and paper text. The molecular measurements may be in an .h5ad, while experimental results, validation, orthogonal characterizations, functional readouts and method assumptions live in the paper or needs to be re-derived even for result interpretation.
+Per-perturbation information is often separated across processed data files, figures, supplementary materials, methods, and paper text. The molecular measurements may be in an .h5ad, while experimental results, validation, orthogonal characterizations, functional readouts and method assumptions live in the paper or need to be re-derived even for result interpretation.
 
 Generating a structured JSON PerturbationRecord for each knockdown, the smallest unit in this dataset, allows for unification of published results derived from both computational and experimental work. This is one approach to enable each perturbation to carry not only results but also caveats and limitations that may not be as obvious to AI agents when accessing the dataset.
 
