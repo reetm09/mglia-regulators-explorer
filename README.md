@@ -97,7 +97,7 @@ Using PerturbationRecord as the base I display data in an interactive dashboard 
 
 <img src="docs/images/architecture_2.png" width="400" alt="Architecture Design - Record to Dashboard and MCP">
 
-See `mglia/schema.py` for more details on PerturbationRecord. Currently optimized for this dataset, many fields are optional can be defined differently across other transcriptomic perturbation datasets. 
+See `mglia/schema.py` for more details on PerturbationRecord. Currently optimized for this dataset, many fields are optional and can be defined differently across other transcriptomic perturbation datasets. 
 
 ## Citation
 
